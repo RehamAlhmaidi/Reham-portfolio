@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reham Alhmaidi — Data Science &amp; AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#090C16;
+    --surface:#10142A;
+    --surface-2:#161B38;
+    --surface-3:#1C2244;
+    --line:#262C4E;
+    --line-soft:#1A1F3B;
+    --text:#EEF0FA;
+    --text-muted:#98A0C3;
+    --text-dim:#687096;
+    --accent:#8C7EF2;
+    --accent-2:#B7ACF7;
+    --accent-soft:rgba(140,126,242,0.12);
+    --gold:#E3B564;
+    --gold-soft:rgba(227,181,100,0.14);
+    --radius-s:8px;
+    --radius-m:14px;
+    --radius-l:22px;
+    --maxw:1140px;
+    --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  .scroll-progress{
+    position:fixed; top:0; left:0; height:2px; width:0%;
+    background:linear-gradient(90deg, var(--accent), var(--gold));
+    z-index:100; transition:width .1s linear;
+  }
+  .reveal{opacity:0; transform:translateY(18px); transition:opacity .7s var(--ease), transform .7s var(--ease);}
+  .reveal.in{opacity:1; transform:translateY(0);}
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1; transform:none; transition:none;}
+  }
+  .divider{
+    display:flex; align-items:center; justify-content:center;
+    height:1px; background:var(--line-soft); position:relative;
+  }
+  .divider span{
+    position:absolute; width:7px; height:7px;
+    background:var(--ink); border:1px solid var(--gold);
+    transform:rotate(45deg);
+  }
+  body{
+    margin:0;
+    background-color:var(--ink);
+    background-image:
+      radial-gradient(rgba(140,126,242,0.16) 1px, transparent 1px),
+      radial-gradient(900px 480px at 85% -5%, rgba(227,181,100,0.05), transparent 60%);
+    background-size:28px 28px, 100% 100%;
+    background-position:0 0, 0 0;
+    color:var(--text);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+  h1,h2,h3{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    margin:0;
+    letter-spacing:-0.015em;
+  }
+  a{color:inherit;}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 32px;}
+  section{padding:112px 0;}
+  @media (max-width:640px){ section{padding:72px 0;} .wrap{padding:0 22px;} }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(9,12,22,0.78);
+    backdrop-filter:blur(14px) saturate(140%);
+    border-bottom:1px solid var(--line-soft);
+  }
+  nav .wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    height:68px;
+  }
+  .nav-name{
+    font-family:'Space Grotesk'; font-weight:600; font-size:15.5px;
+    display:flex; align-items:center; gap:9px;
+  }
+  .nav-name .mark{
+    width:9px; height:9px; border-radius:2px;
+    background:linear-gradient(135deg, var(--accent), var(--gold));
+    flex-shrink:0;
+  }
+  .nav-links{display:flex; gap:8px; list-style:none; margin:0; padding:0;}
+  .nav-links a{
+    font-size:13.5px; color:var(--text-muted); text-decoration:none;
+    padding:8px 14px; border-radius:20px;
+    transition:color .18s var(--ease), background .18s var(--ease);
+  }
+  .nav-links a:hover{color:var(--text); background:var(--surface-2);}
+  .nav-links a.active{color:var(--text); background:var(--surface-3);}
+  .nav-toggle{display:none;}
+  @media (max-width:760px){
+    .nav-links{
+      position:absolute; top:68px; left:0; right:0;
+      background:var(--surface);
+      flex-direction:column; gap:0;
+      border-bottom:1px solid var(--line);
+      max-height:0; overflow:hidden;
+      transition:max-height .3s var(--ease);
+      padding:0 22px;
+    }
+    .nav-links.open{max-height:380px; padding:8px 22px;}
+    .nav-links a{display:block; padding:13px 4px; border-radius:0; border-top:1px solid var(--line-soft);}
+    .nav-links li:first-child a{border-top:none;}
+    .nav-toggle{
+      display:flex; align-items:center; gap:6px;
+      background:none; border:1px solid var(--line);
+      color:var(--text); border-radius:20px; padding:7px 14px;
+      font-size:12.5px; cursor:pointer; font-family:'IBM Plex Mono', monospace;
+    }
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    padding:132px 0 96px;
+    overflow:hidden;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .hero-inner{position:relative; z-index:2; opacity:0; transform:translateY(14px); animation:rise .8s var(--ease) .1s forwards;}
+  @keyframes rise{ to{ opacity:1; transform:translateY(0); } }
+  .kicker{
+    display:inline-flex; align-items:center; gap:9px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    color:var(--gold);
+    margin-bottom:26px;
+    padding:6px 14px 6px 10px;
+    border:1px solid var(--gold-soft);
+    background:var(--gold-soft);
+    border-radius:20px;
+  }
+  .kicker .px{width:6px; height:6px; border-radius:50%; background:var(--gold); flex-shrink:0;}
+  .hero h1{
+    font-size:clamp(36px, 5.6vw, 62px);
+    line-height:1.06;
+    max-width:17ch;
+  }
+  .hero h1 em{
+    font-style:normal;
+    background:linear-gradient(100deg, var(--accent-2), var(--gold));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero-sub{
+    margin-top:24px;
+    max-width:58ch;
+    font-size:17.5px;
+    color:var(--text-muted);
+  }
+  .hero-cta{
+    margin-top:38px;
+    display:flex; gap:14px; flex-wrap:wrap;
+  }
+  .btn{
+    display:inline-flex; align-items:center; gap:9px;
+    padding:12px 22px;
+    border-radius:var(--radius-s);
+    font-size:14px; font-weight:500;
+    text-decoration:none;
+    border:1px solid var(--line);
+    transition:border-color .18s var(--ease), background .18s var(--ease), transform .18s var(--ease);
+  }
+  .btn-primary{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#0A0E1C;
+    font-weight:600;
+  }
+  .btn-primary:hover{background:var(--accent-2); border-color:var(--accent-2); transform:translateY(-2px);}
+  .btn-ghost{color:var(--text);}
+  .btn-ghost:hover{border-color:var(--accent); background:var(--surface-2); transform:translateY(-2px);}
+
+  .hero-links{
+    margin-top:30px;
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  }
+  .hero-link{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:14.5px; font-weight:500; color:var(--text);
+    text-decoration:none;
+    padding:9px 14px;
+    border-radius:20px;
+    border:1px solid transparent;
+    transition:color .18s var(--ease), border-color .18s var(--ease), background .18s var(--ease), transform .18s var(--ease);
+  }
+  .hero-link svg{width:16px; height:16px; flex-shrink:0; color:var(--accent-2);}
+  .hero-link:hover{
+    color:var(--gold);
+    border-color:rgba(227,181,100,0.35);
+    background:var(--gold-soft);
+    transform:translateY(-2px);
+  }
+  .hero-link:hover svg{color:var(--gold);}
+  .hero-links .sep{display:none;}
+
+  .signal{
+    margin-top:64px;
+    display:flex; align-items:center; gap:2px;
+    max-width:520px;
+  }
+  .signal i{
+    flex:1; height:2px; background:var(--line);
+    border-radius:1px;
+  }
+  .signal i.on{background:linear-gradient(90deg, var(--accent), var(--accent-2));}
+  .signal i.flag{background:var(--gold); position:relative;}
+  .signal i.flag::after{
+    content:''; position:absolute; top:50%; left:50%;
+    width:7px; height:7px; margin:-3.5px 0 0 -3.5px;
+    border-radius:50%; background:var(--gold);
+    box-shadow:0 0 0 4px var(--gold-soft);
+    animation:blip 2.4s ease-in-out infinite;
+  }
+  @keyframes blip{ 0%,100%{ box-shadow:0 0 0 4px var(--gold-soft);} 50%{ box-shadow:0 0 0 8px transparent;} }
+
+  .hero-meta{
+    margin-top:40px;
+    display:flex; gap:44px; flex-wrap:wrap;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    color:var(--text-dim);
+  }
+  .hero-meta span{display:block; color:var(--text); font-size:13.5px; margin-top:4px; font-family:'IBM Plex Sans';}
+
+  /* ---------- SECTION HEADS ---------- */
+  .eyebrow{
+    display:flex; align-items:center; gap:10px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px; color:var(--gold);
+    margin-bottom:14px;
+  }
+  .eyebrow .idx{
+    color:var(--text-dim); font-size:11.5px;
+    padding-right:10px; border-right:1px solid var(--line);
+  }
+  .section-head{
+    margin-bottom:52px;
+    max-width:60ch;
+  }
+  .section-head h2{font-size:32px;}
+  .section-head p{margin-top:12px; color:var(--text-muted); font-size:15px;}
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{
+    display:grid; grid-template-columns: 1.3fr 1fr; gap:64px;
+  }
+  @media (max-width:780px){ .about-grid{grid-template-columns:1fr; gap:40px;} }
+  .about-grid p{color:var(--text-muted); font-size:16px; max-width:60ch;}
+  .about-grid p + p{margin-top:16px;}
+  .focus-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:0;}
+  .focus-list li{
+    display:flex; gap:16px; align-items:flex-start;
+    padding:20px 0;
+    border-top:1px solid var(--line-soft);
+  }
+  .focus-list li:first-child{border-top:none; padding-top:0;}
+  .focus-list li .num{
+    font-family:'IBM Plex Mono', monospace; font-size:12.5px;
+    color:var(--gold); padding-top:2px; flex-shrink:0;
+  }
+  .focus-list li strong{color:var(--text); font-weight:600; display:block; font-size:15px; margin-bottom:4px;}
+  .focus-list li span{color:var(--text-muted); font-size:14px;}
+
+  /* ---------- TIMELINE ---------- */
+  .timeline{position:relative; padding-left:32px;}
+  .timeline::before{
+    content:''; position:absolute; left:5px; top:8px; bottom:8px;
+    width:1px; background:linear-gradient(var(--accent), var(--line-soft));
+  }
+  .tl-item{position:relative; padding-bottom:52px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-item::before{
+    content:''; position:absolute; left:-32px; top:6px;
+    width:11px; height:11px; border-radius:50%;
+    background:var(--ink); border:2px solid var(--accent);
+  }
+  .tl-date{
+    font-family:'IBM Plex Mono', monospace; font-size:12.5px;
+    color:var(--gold); margin-bottom:8px;
+  }
+  .tl-item h3{font-size:20px;}
+  .tl-org{color:var(--text-muted); font-size:14.5px; margin-top:3px;}
+  .tl-item ul{margin:16px 0 0; padding-left:0; list-style:none; color:var(--text-muted); font-size:14.5px;}
+  .tl-item ul li{position:relative; padding-left:18px;}
+  .tl-item ul li::before{
+    content:''; position:absolute; left:0; top:9px;
+    width:5px; height:5px; border-radius:50%; background:var(--line);
+  }
+  .tl-item ul li + li{margin-top:9px;}
+
+  /* ---------- PROJECT ---------- */
+  .project-card{
+    border:1px solid var(--line);
+    border-radius:var(--radius-l);
+    padding:44px;
+    background:linear-gradient(155deg, var(--surface), var(--surface-2) 60%, var(--surface-3));
+    position:relative;
+    overflow:hidden;
+    transition:border-color .25s var(--ease), transform .25s var(--ease);
+  }
+  .project-card:hover{border-color:rgba(140,126,242,0.45); transform:translateY(-4px);}
+  .project-card::before{
+    content:''; position:absolute; top:-50%; right:-15%;
+    width:340px; height:340px; border-radius:50%;
+    background:radial-gradient(circle, var(--accent-soft), transparent 70%);
+    pointer-events:none;
+  }
+  .project-card + .project-card,
+  .project-card + .project-card-compact,
+  .project-card-compact{margin-top:24px;}
+  .project-card-compact{padding:30px 44px;}
+  .project-card-compact::before{display:none;}
+  .project-card-compact h3{font-size:19px; max-width:48ch; margin-bottom:14px;}
+  .project-card-compact .project-index{color:var(--text-dim); font-size:11px;}
+  .project-card-compact p{margin-top:14px; font-size:14.5px;}
+  .project-card-compact .project-link{margin-top:22px;}
+  .project-tag-row{position:relative; z-index:1; margin-bottom:18px;}
+  .project-tag{
+    font-family:'IBM Plex Mono', monospace; font-size:11.5px;
+    color:var(--gold); background:var(--gold-soft);
+    border:1px solid rgba(227,181,100,0.3); border-radius:20px;
+    padding:5px 13px; display:inline-block;
+  }
+  .project-index{
+    font-family:'IBM Plex Mono', monospace; font-size:12px;
+    color:var(--gold); margin-bottom:14px; position:relative; z-index:1;
+    display:block;
+  }
+  .project-card h3{
+    font-size:23px; line-height:1.32; max-width:44ch;
+    position:relative; z-index:1;
+    margin-bottom:16px;
+  }
+  .project-card p{color:var(--text-muted); font-size:15px; max-width:66ch; position:relative; z-index:1; margin-top:18px;}
+
+  /* ---------- RASSAD GALLERY ---------- */
+  .rassad-gallery{position:relative; z-index:1; margin-top:28px;}
+  .gallery-main{
+    display:flex; align-items:center; justify-content:center;
+    width:100%; padding:14px;
+    border:1px solid var(--line); border-radius:var(--radius-m);
+    overflow:hidden; background:var(--surface-2); cursor:zoom-in;
+  }
+  .gallery-main img{
+    display:block; width:auto; height:auto;
+    max-width:100%; max-height:480px;
+    object-fit:contain;
+    transition:transform .3s var(--ease);
+  }
+  @media (max-width:700px){ .gallery-main img{max-height:340px;} }
+  @media (max-width:420px){ .gallery-main img{max-height:260px;} }
+  .gallery-main:hover img{transform:scale(1.015);}
+  .gallery-thumbs{
+    display:grid; grid-template-columns:repeat(4, 1fr); gap:10px;
+    margin-top:10px;
+  }
+  .gallery-thumb{
+    display:block; padding:0; margin:0; text-align:left;
+    border:1px solid var(--line); border-radius:var(--radius-s);
+    overflow:hidden; background:var(--surface-2); cursor:pointer;
+    transition:border-color .2s var(--ease), transform .2s var(--ease);
+  }
+  .gallery-thumb img{
+    width:100%; aspect-ratio:16/10; object-fit:cover; display:block;
+    opacity:0.72; transition:opacity .2s var(--ease);
+  }
+  .gallery-thumb .gallery-caption{
+    display:block; font-family:'IBM Plex Mono', monospace; font-size:10.5px;
+    color:var(--text-dim); padding:6px 8px 8px;
+  }
+  .gallery-thumb:hover{border-color:rgba(140,126,242,0.45); transform:translateY(-2px);}
+  .gallery-thumb:hover img{opacity:1;}
+  .gallery-thumb.active{border-color:var(--accent);}
+  .gallery-thumb.active img{opacity:1;}
+  .gallery-thumb.active .gallery-caption{color:var(--gold);}
+  @media (max-width:600px){
+    .gallery-thumbs{grid-template-columns:repeat(2, 1fr);}
+  }
+
+  .lightbox-overlay{
+    position:fixed; inset:0; z-index:999;
+    background:rgba(9,12,22,0.94);
+    display:none; align-items:center; justify-content:center;
+    padding:48px 24px; cursor:zoom-out;
+  }
+  .lightbox-overlay.open{display:flex;}
+  .lightbox-overlay img{
+    max-width:100%; max-height:100%;
+    border-radius:var(--radius-m); border:1px solid var(--line);
+    cursor:default;
+  }
+  .lightbox-close{
+    position:absolute; top:22px; right:26px;
+    background:none; border:1px solid var(--line);
+    color:var(--text); width:38px; height:38px; border-radius:50%;
+    font-size:20px; line-height:1; cursor:pointer;
+    transition:border-color .18s var(--ease), color .18s var(--ease);
+  }
+  .lightbox-close:hover{border-color:var(--gold); color:var(--gold);}
+  .stack-row{display:flex; flex-wrap:wrap; gap:9px; margin-top:26px; position:relative; z-index:1;}
+  .stack-chip{
+    font-family:'IBM Plex Mono', monospace; font-size:12px;
+    border:1px solid var(--line); border-radius:var(--radius-s);
+    padding:6px 12px; color:var(--text-muted);
+    background:var(--surface);
+  }
+  .project-link{
+    margin-top:30px; display:inline-flex; align-items:center; gap:8px;
+    font-size:14px; color:var(--accent-2); text-decoration:none; font-weight:500;
+    position:relative; z-index:1;
+    transition:gap .18s var(--ease);
+  }
+  .project-link:hover{gap:12px;}
+  .more-repos{
+    margin-top:24px; font-size:14.5px; color:var(--text-muted);
+  }
+  .more-repos a{color:var(--text); text-decoration:underline; text-underline-offset:3px; text-decoration-color:var(--line);}
+  .more-repos a:hover{text-decoration-color:var(--accent);}
+
+  /* ---------- SKILLS ---------- */
+  .skill-groups{display:grid; grid-template-columns:repeat(2, 1fr); gap:40px 56px;}
+  @media (max-width:700px){ .skill-groups{grid-template-columns:1fr;} }
+  .skill-group{border-top:1px solid var(--line-soft); padding-top:22px;}
+  .skill-group h3{
+    font-size:13.5px; font-family:'IBM Plex Mono', monospace; font-weight:500;
+    color:var(--text-muted); margin-bottom:16px;
+  }
+  .chip-row{display:flex; flex-wrap:wrap; gap:9px;}
+  .chip{
+    font-size:13.5px; padding:8px 15px;
+    border:1px solid var(--line); border-radius:20px;
+    color:var(--text);
+    background:var(--surface);
+    transition:border-color .18s var(--ease), background .18s var(--ease);
+  }
+  .chip:hover{border-color:var(--accent); background:var(--surface-2);}
+
+  /* ---------- EDUCATION + CERTIFICATIONS (unified) ---------- */
+  .credentials-grid{display:grid; grid-template-columns:0.85fr 1.15fr; gap:64px;}
+  @media (max-width:820px){ .credentials-grid{grid-template-columns:1fr; gap:48px;} }
+  .credential-label{
+    font-family:'IBM Plex Mono', monospace; font-size:12.5px;
+    color:var(--text-muted); margin-bottom:20px;
+    display:flex; align-items:center; gap:9px;
+  }
+  .credential-label .ln{flex:1; height:1px; background:var(--line);}
+  .edu-card{
+    border:1px solid var(--line); border-radius:var(--radius-m);
+    padding:28px;
+    background:var(--surface);
+  }
+  .edu-card h3{font-size:18px;}
+  .edu-card .tl-org{margin-top:5px;}
+  .edu-stats{
+    display:flex; gap:32px; margin-top:20px;
+    font-family:'IBM Plex Mono', monospace; font-size:13px;
+  }
+  .edu-stats div span{display:block; color:var(--text-muted); font-size:11.5px; margin-bottom:3px; font-family:'IBM Plex Sans';}
+  .cert-list{display:flex; flex-direction:column; gap:0;}
+  .cert-block{border-top:1px solid var(--line-soft); padding:22px 0;}
+  .cert-block:first-child{border-top:none; padding-top:0;}
+  .cert-block:last-child{padding-bottom:0;}
+  .cert-org{
+    font-family:'IBM Plex Mono', monospace; font-size:12.5px; color:var(--gold);
+    font-weight:500;
+    margin:0 0 10px;
+  }
+  .cert-item{
+    color:var(--text-muted); font-size:14.5px;
+    margin:0 0 6px;
+    padding-left:16px;
+    position:relative;
+  }
+  .cert-item::before{
+    content:''; position:absolute; left:0; top:9px;
+    width:5px; height:5px; border-radius:50%; background:var(--line);
+  }
+  .cert-item:last-child{margin-bottom:0;}
+
+  /* ---------- CONTACT ---------- */
+  .contact-band{
+    border-top:1px solid var(--line-soft);
+    padding:112px 0 72px;
+    position:relative;
+    overflow:hidden;
+  }
+  .contact-band::before{
+    content:''; position:absolute; top:-20%; left:50%;
+    width:700px; height:420px; transform:translateX(-50%);
+    background:radial-gradient(ellipse, rgba(140,126,242,0.10), transparent 70%);
+    pointer-events:none;
+  }
+  .contact-top{position:relative; z-index:1; max-width:62ch; margin-bottom:56px;}
+  .contact-top h2{font-size:clamp(28px,3.6vw,40px); margin-top:10px;}
+  .contact-top p{margin-top:16px; color:var(--text-muted); font-size:15.5px;}
+  .contact-grid{
+    position:relative; z-index:1;
+    display:grid; grid-template-columns:repeat(2, 1fr); gap:16px;
+  }
+  @media (max-width:700px){ .contact-grid{grid-template-columns:1fr;} }
+  .contact-card{
+    display:flex; align-items:center; gap:18px;
+    padding:24px 26px;
+    border:1px solid var(--line);
+    border-radius:var(--radius-m);
+    background:var(--surface);
+    text-decoration:none;
+    transition:border-color .2s var(--ease), background .2s var(--ease), transform .2s var(--ease);
+  }
+  .contact-card:hover{
+    border-color:rgba(140,126,242,0.5);
+    background:var(--surface-2);
+    transform:translateY(-3px);
+  }
+  .contact-icon{
+    display:flex; align-items:center; justify-content:center;
+    width:44px; height:44px; flex-shrink:0;
+    border-radius:var(--radius-s);
+    background:var(--accent-soft);
+    color:var(--accent-2);
+    transition:background .2s var(--ease), color .2s var(--ease);
+  }
+  .contact-icon svg{width:20px; height:20px;}
+  .contact-card:hover .contact-icon{background:var(--gold-soft); color:var(--gold);}
+  .contact-text{display:flex; flex-direction:column; gap:4px; min-width:0;}
+  .contact-label{
+    font-family:'IBM Plex Mono', monospace; font-size:11.5px;
+    color:var(--text-dim);
+  }
+  .contact-value{
+    font-size:15px; color:var(--text); font-weight:500;
+    word-break:break-word;
+  }
+  footer{
+    border-top:1px solid var(--line-soft);
+    padding:26px 0;
+    font-size:12.5px; color:var(--text-dim);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
+  }
+</style>
+</head>
+<body>
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<nav>
+  <div class="wrap">
+    <div class="nav-name"><span class="mark"></span>Reham Alhmaidi</div>
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-label="Toggle menu">Menu</button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#about">About</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#education">Education &amp; Certifications</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-inner">
+    <div class="kicker"><span class="px"></span>DATA SCIENCE · AI · ANALYTICS</div>
+    <h1>Turning data into <em>intelligent</em>, practical solutions.</h1>
+    <p class="hero-sub">Data Science graduate specializing in Machine Learning, NLP, and AI, with hands-on experience developing data-driven solutions across compliance, healthcare IT, and robotics. Skilled in Python, SQL, data analytics, and machine learning, with a focus on turning complex data into practical insights and solutions.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="#contact">Get in touch</a>
+    </div>
+    <div class="hero-links">
+      <a class="hero-link" href="https://github.com/RehamAlhmaidi" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 8 5 12 9 16"/><polyline points="15 8 19 12 15 16"/></svg>
+        GitHub
+      </a>
+      <span class="sep"></span>
+      <a class="hero-link" href="https://linkedin.com/in/rehamalhmaidi" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><line x1="7.5" y1="10.5" x2="7.5" y2="16.5"/><circle cx="7.5" cy="7" r="0.9" fill="currentColor" stroke="none"/><path d="M11.5 16.5v-4a2 2 0 0 1 4 0v4"/><line x1="11.5" y1="10.5" x2="11.5" y2="16.5"/></svg>
+        LinkedIn
+      </a>
+      <span class="sep"></span>
+      <a class="hero-link" href="Reham-Alhmaidi-CV.pdf" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3.5h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-16a1 1 0 0 1 1-1Z"/><polyline points="14 3.5 14 8 18.5 8"/></svg>
+        View CV
+      </a>
+      <span class="sep"></span>
+      <a class="hero-link" id="cvDownloadBtn" href="Reham-Alhmaidi-CV.pdf" download="Reham-Alhmaidi-CV.pdf">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><polyline points="7.5 11 12 15.5 16.5 11"/><path d="M5 18.5h14"/></svg>
+        Download CV
+      </a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section id="about">
+    <div class="wrap about-grid reveal">
+      <div>
+        <div class="eyebrow"><span class="idx">01</span>about</div>
+        <h2 style="margin-bottom:24px;">Where data meets intelligence</h2>
+        <p>I’m a Data Science graduate from the University of Jeddah with hands-on experience in Machine Learning, AI, NLP, and Data Analytics. Through academic projects and practical training, I’ve developed data-driven solutions that combine analytical thinking with machine learning techniques to solve real-world problems.</p>
+        <p>My work includes AI-based compliance monitoring, NLP and deep learning projects, and explainable AI. I’ve also gained practical experience in healthcare IT and robotics, giving me a broader perspective on how technology and data can be applied in real-world environments.</p>
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-bottom:20px;">areas of focus</div>
+        <ul class="focus-list">
+          <li><span class="num">01</span><div><strong>Data Analytics</strong><span>Using Python, SQL, and Power BI to explore data, identify patterns, and communicate insights.</span></div></li>
+          <li><span class="num">02</span><div><strong>AI &amp; NLP</strong><span>Applying artificial intelligence and natural language processing techniques to analyze text and develop intelligent solutions.</span></div></li>
+          <li><span class="num">03</span><div><strong>Machine Learning</strong><span>Developing and evaluating machine learning and deep learning models for data-driven applications.</span></div></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"><span></span></div>
+
+  <section id="experience">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow"><span class="idx">02</span>experience</div>
+        <h2>From technical systems to data-driven solutions</h2>
+      </div>
+      <div class="timeline reveal">
+        <div class="tl-item">
+          <div class="tl-date">June 2025 — July 2025</div>
+          <h3>IT &amp; Digital Health Intern</h3>
+          <div class="tl-org">King Abdullah Medical Complex, Jeddah</div>
+          <ul>
+            <li>Provided technical support and troubleshooting for hospital systems, IT infrastructure, ticketing systems, and network devices.</li>
+            <li>Developed digital forms using Microsoft Excel to support healthcare data collection and administrative workflows.</li>
+          </ul>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">December 2024 — February 2025</div>
+          <h3>Full Stack Robotics Engineering Intern</h3>
+          <div class="tl-org">Smart Methods, Jeddah</div>
+          <ul>
+            <li>Completed four specialized tracks covering Robotics &amp; AI, Web Development &amp; NLP, Electronics &amp; IoT, and Mechanical Design, gaining hands-on experience across multidisciplinary technical projects.</li>
+            <li>Applied programming, AI, NLP, IoT, and system integration concepts through practical projects, including front-end and back-end development, robotics, and automation.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"><span></span></div>
+
+  <section id="projects">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow"><span class="idx">03</span>projects</div>
+        <h2>Selected Work</h2>
+      </div>
+      <div class="project-card reveal">
+        <span class="project-index">P.01 — primary</span>
+        <h3>RASSAD — AI-Based PDPL Compliance Monitoring System</h3>
+        <div class="project-tag-row"><span class="project-tag">DistilRoBERTa · NLP · Text Classification · Explainable AI · Python</span></div>
+        <p>An AI-based system designed to monitor text for compliance with Saudi Arabia's Personal Data Protection Law (PDPL). It combines NLP and DistilRoBERTa-based text classification with rule-based compliance checks, predictive analysis, explainable AI, and automated recommendations to help assess potential privacy violations and support compliance review.</p>
+
+        <div class="rassad-gallery">
+          <button class="gallery-main" id="galleryMain" type="button" aria-label="View screenshot larger">
+            <img id="galleryMainImg" src="rassad-screenshots/rassad-check-compliance.png" alt="RASSAD AI compliance check interface showing analysis results and recommendations">
+          </button>
+          <div class="gallery-thumbs">
+            <button class="gallery-thumb active" type="button" data-src="rassad-screenshots/rassad-check-compliance.png" data-alt="RASSAD AI compliance check interface showing analysis results and recommendations">
+              <img src="rassad-screenshots/rassad-check-compliance.png" alt="Compliance check thumbnail">
+              <span class="gallery-caption">Compliance check</span>
+            </button>
+            <button class="gallery-thumb" type="button" data-src="rassad-screenshots/rassad-dashboard.png" data-alt="RASSAD dashboard showing overall compliance status and violation breakdown charts">
+              <img src="rassad-screenshots/rassad-dashboard.png" alt="Dashboard thumbnail">
+              <span class="gallery-caption">Dashboard</span>
+            </button>
+            <button class="gallery-thumb" type="button" data-src="rassad-screenshots/rassad-pdpl-standards.png" data-alt="RASSAD PDPL standards reference page listing violation categories">
+              <img src="rassad-screenshots/rassad-pdpl-standards.png" alt="PDPL standards thumbnail">
+              <span class="gallery-caption">PDPL standards</span>
+            </button>
+            <button class="gallery-thumb" type="button" data-src="rassad-screenshots/rassad-home.png" data-alt="RASSAD home page describing the input, processing, and output pipeline">
+              <img src="rassad-screenshots/rassad-home.png" alt="Home page thumbnail">
+              <span class="gallery-caption">Overview</span>
+            </button>
+          </div>
+        </div>
+
+        <a class="project-link" href="https://github.com/RehamAlhmaidi/RASSAD-PDPL-Compliance" target="_blank" rel="noopener">View repository →</a>
+      </div>
+
+      <div class="project-card project-card-compact reveal">
+        <span class="project-index">P.02</span>
+        <h3>Flower Classification — Custom CNN</h3>
+        <div class="project-tag-row"><span class="project-tag">Deep Learning · Computer Vision · CNN · TensorFlow · Keras</span></div>
+        <p>A deep learning project that uses a custom Convolutional Neural Network (CNN) built with TensorFlow and Keras to classify flower images into multiple categories. The project includes image preprocessing, exploratory data analysis, model training and evaluation, and prediction on unseen images. The model achieved 83.03% test accuracy.</p>
+        <a class="project-link" href="https://github.com/RehamAlhmaidi/flower-classification-cnn" target="_blank" rel="noopener">View repository →</a>
+      </div>
+
+      <p class="more-repos">More projects and experiments are available on <a href="https://github.com/RehamAlhmaidi?tab=repositories" target="_blank" rel="noopener">GitHub</a>.</p>
+    </div>
+  </section>
+
+  <div class="divider"><span></span></div>
+
+  <section id="skills">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow"><span class="idx">04</span>skills</div>
+        <h2>Skills &amp; Expertise</h2>
+      </div>
+      <div class="skill-groups reveal">
+        <div class="skill-group">
+          <h3>Data Analytics &amp; BI</h3>
+          <div class="chip-row">
+            <span class="chip">Power BI</span>
+            <span class="chip">Excel</span>
+            <span class="chip">RapidMiner</span>
+            <span class="chip">RStudio</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>Programming &amp; Databases</h3>
+          <div class="chip-row">
+            <span class="chip">Python</span>
+            <span class="chip">SQL</span>
+            <span class="chip">Java</span>
+            <span class="chip">Oracle</span>
+            <span class="chip">MySQL</span>
+            <span class="chip">MongoDB</span>
+            <span class="chip">Neo4j</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>Machine Learning &amp; AI</h3>
+          <div class="chip-row">
+            <span class="chip">Machine Learning</span>
+            <span class="chip">Deep Learning</span>
+            <span class="chip">NLP</span>
+            <span class="chip">Apache Spark</span>
+            <span class="chip">Hadoop</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>Professional Skills</h3>
+          <div class="chip-row">
+            <span class="chip">Problem-Solving</span>
+            <span class="chip">Analytical Thinking</span>
+            <span class="chip">Teamwork</span>
+            <span class="chip">Communication</span>
+            <span class="chip">Time Management</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"><span></span></div>
+
+  <section id="education">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow"><span class="idx">05</span>grounded in formal study, sharpened by practice</div>
+        <h2>Education &amp; Certifications</h2>
+      </div>
+      <div class="credentials-grid reveal">
+        <div>
+          <div class="credential-label">Education<span class="ln"></span></div>
+          <div class="edu-card">
+            <h3>Bachelor of Data Science</h3>
+            <div class="tl-org">University of Jeddah</div>
+            <div class="edu-stats">
+              <div><span>Graduated</span>June 2026</div>
+              <div><span>GPA</span>4.72 / 5.00</div>
+            </div>
+          </div>
+          <div class="edu-card" style="margin-top:20px;">
+            <h3>Languages</h3>
+            <div class="chip-row" style="margin-top:14px;">
+              <span class="chip">Arabic</span>
+              <span class="chip">English</span>
+            </div>
+          </div>
+        </div>
+        <div id="certifications">
+          <div class="credential-label">Certifications<span class="ln"></span></div>
+          <div class="cert-list">
+            <div class="cert-block">
+              <p class="cert-org">Huawei — August 2025</p>
+              <p class="cert-item">HCIA-AI V3.5</p>
+              <p class="cert-item">HCIA-Cloud Service V3.5</p>
+              <p class="cert-item">HCIA-Cloud Computing V5.5</p>
+            </div>
+            <div class="cert-block">
+              <p class="cert-org">Smart Methods — February 2025</p>
+              <p class="cert-item">Full Stack Robotics Engineer</p>
+              <p class="cert-item">Robotics and Artificial Intelligence</p>
+              <p class="cert-item">Web Development and Natural Language Processing</p>
+              <p class="cert-item">Electronics, Power Systems and Internet of Things</p>
+              <p class="cert-item">Mechanical Design</p>
+            </div>
+            <div class="cert-block">
+              <p class="cert-org">Saudi Digital Academy — February 2024</p>
+              <p class="cert-item">AWS Cloud Practitioner</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<section id="contact" class="contact-band">
+  <div class="wrap">
+    <div class="contact-top">
+      <div class="eyebrow"><span class="idx">06</span>contact</div>
+      <h2>Let's turn data into impact.</h2>
+      <p>Open to opportunities in data science, machine learning, and AI. Reach out through any of the channels below.</p>
+    </div>
+    <div class="contact-grid reveal">
+      <a class="contact-card" href="mailto:rehamalhmaidi@gmail.com">
+        <span class="contact-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 6.5l8.5 7 8.5-7"/></svg>
+        </span>
+        <span class="contact-text">
+          <span class="contact-label">Email</span>
+          <span class="contact-value">rehamalhmaidi@gmail.com</span>
+        </span>
+      </a>
+      <a class="contact-card" href="tel:+966543938767">
+        <span class="contact-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 3.5h3l1.5 4-2 1.6a11 11 0 0 0 5.9 5.9l1.6-2 4 1.5v3a2 2 0 0 1-2.2 2A17.5 17.5 0 0 1 4.5 5.7 2 2 0 0 1 6.5 3.5Z"/></svg>
+        </span>
+        <span class="contact-text">
+          <span class="contact-label">Phone</span>
+          <span class="contact-value">+966 54 393 8767</span>
+        </span>
+      </a>
+      <a class="contact-card" href="https://linkedin.com/in/rehamalhmaidi" target="_blank" rel="noopener">
+        <span class="contact-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><line x1="7.5" y1="10.5" x2="7.5" y2="16.5"/><circle cx="7.5" cy="7" r="0.9" fill="currentColor" stroke="none"/><path d="M11.5 16.5v-4a2 2 0 0 1 4 0v4"/><line x1="11.5" y1="10.5" x2="11.5" y2="16.5"/></svg>
+        </span>
+        <span class="contact-text">
+          <span class="contact-label">LinkedIn</span>
+          <span class="contact-value">linkedin.com/in/rehamalhmaidi</span>
+        </span>
+      </a>
+      <a class="contact-card" href="https://github.com/RehamAlhmaidi" target="_blank" rel="noopener">
+        <span class="contact-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 8 5 12 9 16"/><polyline points="15 8 19 12 15 16"/></svg>
+        </span>
+        <span class="contact-text">
+          <span class="contact-label">GitHub</span>
+          <span class="contact-value">github.com/RehamAlhmaidi</span>
+        </span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap" style="display:flex; justify-content:space-between; width:100%; flex-wrap:wrap; gap:8px;">
+    <span>Reham Fahad Alhmaidi — Jeddah, Saudi Arabia</span>
+    <span>Built with care.</span>
+  </div>
+</footer>
+
+<div class="lightbox-overlay" id="lightboxOverlay">
+  <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Close">×</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<script>
+  const toggle = document.getElementById('navToggle');
+  const links = document.getElementById('navLinks');
+  toggle.addEventListener('click', () => {
+    const open = links.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open);
+  });
+  links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    links.classList.remove('open');
+    toggle.setAttribute('aria-expanded', false);
+  }));
+
+  const navAnchors = links.querySelectorAll('a');
+  const sections = Array.from(navAnchors).map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting){
+        const id = '#' + entry.target.id;
+        navAnchors.forEach(a => a.classList.toggle('active', a.getAttribute('href') === id));
+      }
+    });
+  }, { rootMargin: '-40% 0px -50% 0px' });
+  sections.forEach(s => observer.observe(s));
+
+  const progressBar = document.getElementById('scrollProgress');
+  function updateProgress(){
+    const h = document.documentElement;
+    const scrolled = h.scrollTop;
+    const height = h.scrollHeight - h.clientHeight;
+    const pct = height > 0 ? (scrolled / height) * 100 : 0;
+    progressBar.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  const revealEls = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting){
+        entry.target.classList.add('in');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+  revealEls.forEach(el => revealObserver.observe(el));
+
+  const cvBtn = document.getElementById('cvDownloadBtn');
+  cvBtn.addEventListener('click', function(e){
+    e.preventDefault();
+    const url = cvBtn.getAttribute('href');
+    fetch(url)
+      .then(res => {
+        if(!res.ok) throw new Error('not found');
+        return res.blob();
+      })
+      .then(blob => {
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = 'Reham-Alhmaidi-CV.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(blobUrl);
+      })
+      .catch(() => {
+        window.open(url, '_blank');
+      });
+  });
+
+  const galleryMain = document.getElementById('galleryMain');
+  const galleryMainImg = document.getElementById('galleryMainImg');
+  const thumbs = document.querySelectorAll('.gallery-thumb');
+  const lightbox = document.getElementById('lightboxOverlay');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxClose = document.getElementById('lightboxClose');
+
+  thumbs.forEach(thumb => {
+    thumb.addEventListener('click', () => {
+      const src = thumb.getAttribute('data-src');
+      const alt = thumb.getAttribute('data-alt');
+      galleryMainImg.src = src;
+      galleryMainImg.alt = alt;
+      thumbs.forEach(t => t.classList.remove('active'));
+      thumb.classList.add('active');
+    });
+  });
+
+  function openLightbox(){
+    lightboxImg.src = galleryMainImg.src;
+    lightboxImg.alt = galleryMainImg.alt;
+    lightbox.classList.add('open');
+  }
+  function closeLightbox(){
+    lightbox.classList.remove('open');
+  }
+  if (galleryMain){
+    galleryMain.addEventListener('click', openLightbox);
+  }
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox){ closeLightbox(); }
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape'){ closeLightbox(); }
+  });
+</script>
+
+</body>
+</html>
